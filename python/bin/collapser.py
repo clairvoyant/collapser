@@ -1,5 +1,10 @@
+#!/usr/bin/env python
 
-#!/usr/bin/python
+"""  is a class that takes a csv file as input and perform aritmetic operations in the
+    columns. 
+
+    The output will be the diferent rows colapsed into the key fields. 
+"""
 
 import sys
 import getopt
@@ -22,13 +27,18 @@ OPT_HELP  = "help"
 ######
 
 class Config:
+    """ generic class to track the user parameters. main internal variable is a dictionary of lists.  """
+
     def __init__(self):
+        """ generic class to track the user parameters. All variables shall be list or dictioneries """
+        
         self.config = {}
         self.config[OPT_METRIC] = []
         self.config[OPT_DIM]    = []
         self.config[OPT_FILES]  = []
 
     def parse(self, args):
+        """ fills the internal config dictionary by using the cli parameters as keys. """
         (options,files) = getopt.getopt(args, "h", [OPT_METRIC, OPT_DIM, OPT_FILES, OPT_HELP])
 
         for (o,v) in options:
@@ -47,9 +57,11 @@ class Config:
         self.config[OPT_FILES] = files
 
     def getFiles(self):
+        """ return a list of configured files to be read. """
         return self.config[OPT_FILES]
 
     def getMetrics(self):
+        """ return a list of configured metrics to be used. . """
         return self.config[OPT_METRIC]
 
     def getDims(self):
@@ -57,7 +69,7 @@ class Config:
 
     def usage(self):
         return """
-Usage: correlator [--dim N].. [--metric]... files
+Usage: collapser [--dim N].. [--metric]... files
    
        more than one dimension can be selected.
        more than one metric can be selected.
@@ -80,6 +92,7 @@ def safeint(s):
     return result
 
 def getConfig(args):
+    """ configuration singleton. Config shall be instantiated calling this getConfig"""
     global _config
 
     if _config == None:
@@ -95,8 +108,9 @@ def getConfig(args):
         return s
     
 
-class Correlate:
+class Collapser:
 
+     """ configuration singleton. Config shall be instantiated calling this getConfig"""
      def init(self, dims, metrics):
         self.dimsColumns    = dims
         self.metricsColumns = metrics
@@ -104,8 +118,12 @@ class Correlate:
 
                 
      def do(self, record):
+        """ algoritm is straighforward. use the dims as a dictionary to index diferent values. 
+             Add the counters/metrics per key. 
+             if more than one key is configured, then agregate them in order to make a unique key.
+             
+             record: shall be a list of values. if the len is not enought, then return."""
          
-        print "jrv:: reading", record
         dimkey = ""
         for dim in self.dimsColumns:
             if len(record) < dim:
@@ -127,6 +145,7 @@ class Correlate:
             row[metric] += safeint(record[metric])
 
      def __str__(self):
+        """ return a comma separated representation of each element in the record """
         result = ''
         for dimKey in self.results.keys():
             dimRow = self.results[dimKey]
@@ -148,11 +167,14 @@ class Correlate:
         return result
 
 
-def correlatorCallback(line, correlator):
+def collapserCallback(line, collapser):
     # TODO global variable... BAD....
-    correlator.do(line)
+    collapser.do(line)
 
 def parseCSV(file, cb, param):
+    """ implement a csv reader reactor, the callback is executed per each csv record. """
+    
+    # TODO read gz and bz compresed csv files.
     
     f = open(file, "r")
     reader = csv.reader(f)
@@ -163,11 +185,11 @@ def parseCSV(file, cb, param):
     f.close()
 
 def readFiles(files, dims, metrics):
-    results = Correlate()
+    results = Collapser()
     results.init(dims, metrics)
 
     for file in files:
-        parseCSV(file, correlatorCallback, results)
+        parseCSV(file, collapserCallback, results)
 
     return results
 

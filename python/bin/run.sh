@@ -2,6 +2,6 @@
 
 base=`dirname $0`
 
-exec ${base}/correlator.py --dim=0 --metric=1 ${base}/../test/three.csv
+exec ${base}/collapser.py --dim=0 --metric=1 ${base}/../../test/01.csv
 
 
