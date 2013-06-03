@@ -10,6 +10,10 @@ import sys
 import getopt
 import csv
 
+
+from libcollapser import *
+from csvreader import *
+
 OPT_METRIC = 'metric='
 OPT_DIM    = 'dim='
 OPT_FILES  = "files="
@@ -81,16 +85,6 @@ Usage: collapser [--dim N].. [--metric]... files
 
 _config = None
 
-def safeint(s):
-    result = 0
-
-    try:
-       result = int(s)
-    except:
-       pass
-
-    return result
-
 def getConfig(args):
     """ configuration singleton. Config shall be instantiated calling this getConfig"""
     global _config
@@ -108,88 +102,15 @@ def getConfig(args):
         return s
     
 
-class Collapser:
-
-     """ configuration singleton. Config shall be instantiated calling this getConfig"""
-     def init(self, dims, metrics):
-        self.dimsColumns    = dims
-        self.metricsColumns = metrics
-        self.results        = {}
-
-                
-     def do(self, record):
-        """ algoritm is straighforward. use the dims as a dictionary to index diferent values. 
-             Add the counters/metrics per key. 
-             if more than one key is configured, then agregate them in order to make a unique key.
-             
-             record: shall be a list of values. if the len is not enought, then return."""
-         
-        dimkey = ""
-        for dim in self.dimsColumns:
-            if len(record) < dim:
-               return # not enough info
-            dimkey += record[dim] + ','
-
-        if not dimkey in self.results:
-           self.results[dimkey] =  {}
-
-        row = self.results[dimkey]
-
-        for metric in self.metricsColumns:
-            if len(record) < metric:
-               return # not enough info
-
-            # perform adition
-            if not metric in row:
-               row[metric] = 0
-            row[metric] += safeint(record[metric])
-
-     def __str__(self):
-        """ return a comma separated representation of each element in the record """
-        result = ''
-        for dimKey in self.results.keys():
-            dimRow = self.results[dimKey]
-            s      = ''
-
-            first=True
-
-            for metricCol in dimRow.keys():
-                metricVal = dimRow[metricCol]
-                if first:
-                   first = False
-                   s += str(metricVal)
-                else:
-                   s += ','+ str(metricVal)
-
-            result += dimKey + s +"\n"
-
-
-        return result
-
-
 def collapserCallback(line, collapser):
     # TODO global variable... BAD....
     collapser.do(line)
-
-def parseCSV(file, cb, param):
-    """ implement a csv reader reactor, the callback is executed per each csv record. """
-    
-    # TODO read gz and bz compresed csv files.
-    
-    f = open(file, "r")
-    reader = csv.reader(f)
-
-    for row in reader:
-        cb(row, param)
-
-    f.close()
 
 def readFiles(files, dims, metrics):
     results = Collapser()
     results.init(dims, metrics)
 
-    for file in files:
-        parseCSV(file, collapserCallback, results)
+    parseCSV(files, collapserCallback, results)
 
     return results
 
