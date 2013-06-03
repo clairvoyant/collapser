@@ -8,7 +8,7 @@
 #  include "csv-parser.tab.hh" 
 
 #  define YY_DECL               \
-#  yy::csv_parser::token_type   \
+   yy::csv_parser::token_type   \
    yylex (yy::csv_parser::semantic_type* yylval,      \
           yy::csv_parser::location_type* yylloc,      \
           csv_driver& driver)

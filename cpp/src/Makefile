@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=
-OBJECTS=  lexer.o csv-parser.tab.o   main.o
+OBJECTS=  csv-lexer.o csv-parser.tab.o   main.o
 #OBJECTS=$(SOURCES:%.cc=.o)
 EXECUTABLE=main
 
@@ -13,7 +13,7 @@ $(EXECUTABLE): $(OBJECTS)
 clean:
 	rm -f $(OBJECTS) csv-parser.tab.* lexer.c
 
-lexer.cc: lexer.lpp csv-parser.tab.cc
+csv-lexer.cc: csv-lexer.ll csv-parser.tab.cc
 	flex   -+ -t $< > $@
 
 csv-parser.tab.cc: csv-parser.yy
