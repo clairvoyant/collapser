@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=
-OBJECTS=  lexer.o grammar.tab.o   main.o
+OBJECTS=  lexer.o csv-parser.tab.o   main.o
 #OBJECTS=$(SOURCES:%.cc=.o)
 EXECUTABLE=main
 
@@ -11,12 +11,12 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS)  -o $@
 
 clean:
-	rm -f $(OBJECTS) grammar.tab.* lexer.c
+	rm -f $(OBJECTS) csv-parser.tab.* lexer.c
 
-lexer.cc: lexer.lpp grammar.tab.cc
+lexer.cc: lexer.lpp csv-parser.tab.cc
 	flex   -+ -t $< > $@
 
-grammar.tab.cc: grammar.ypp
+csv-parser.tab.cc: csv-parser.yy
 	bison  -d $< -o $@
 
 .cpp.o:
