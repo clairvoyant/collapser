@@ -1,12 +1,12 @@
 %{
-    #include <cstdlib>
-    #include <errno.h>
-    #include <limits.h>
-    #include "csv-driver.hh"
-    #include "csv-parser.tab.hh"
+#include <cstdlib>
+#include <errno.h>
+#include <limits.h>
+#include "csv-driver.hh"
+#include "csv-parser.tab.hh"
 
-    # undef yywrap
-    # define yywrap() 1
+# undef yywrap
+# define yywrap() 1
 
     
 %}
@@ -35,17 +35,17 @@
 %}
 
 \n                         { yylloc->lines(yyleng); yylloc->step(); }
-[0-9]+                     { yylval = atoi(yytext); return NUM; }
-\"[^\"\n]*\"               { return STR; }
-[a-zA-Z][a-zA-Z0-9]*       { return ID; }
-\)                         { return RPAREN;   }
-\(                         { return LPAREN; }
+[0-9]+                     { yylval = atoi(yytext); return yy::csv_parser::token::NUM; }
+\"[^\"\n]*\"               { return yy::csv_parser::token::STR; }
+[a-zA-Z][a-zA-Z0-9]*       { return yy::csv_parser::token::ID; }
+\)                         { return yy::csv_parser::token::RPAREN;   }
+\(                         { return yy::csv_parser::token::LPAREN; }
 .
 %%
 
 
 void
-calcxx_driver::scan_begin ()
+csv_driver::scan_begin ()
 {
     yy_flex_debug = trace_scanning;
     if (!(yyin = fopen (file.c_str (), "r")))
@@ -53,7 +53,7 @@ calcxx_driver::scan_begin ()
 }
 
 void
-calcxx_driver::scan_end ()
+csv_driver::scan_end ()
 {
     fclose (yyin);
 }

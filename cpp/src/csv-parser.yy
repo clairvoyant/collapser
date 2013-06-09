@@ -1,9 +1,13 @@
 
+%skeleton "lalr1.cc"
+%require "2.1a"
 %defines
 %define "parser_class_name" "csv_parser"
 
+
 %{
 #include <string>
+#include "csv-driver.hh"
 class csv_driver;
 
 %}

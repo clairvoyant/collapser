@@ -1,18 +1,24 @@
 
-#include <tr1/memory>
-#include <string>
-#include <vector>
-#include "common.h"
 
 
-int yyparse();
+#include <iostream>
+#include "csv-driver.hh"
 
 int
-main(int argc, char* argv[])
+main (int argc, char *argv[])
 {
-    yyparse();
+    csv_driver driver;
 
-    return 0;
-} 
-
+    // input parameters.
+    for (++argv; argv[0]; ++argv)
+        if (*argv == std::string ("-p"))
+            driver.trace_parsing = true;
+        else if (*argv == std::string ("-s"))
+            driver.trace_scanning = true;
+        else
+        {
+            driver.parse (*argv);
+            std::cout << driver.result << std::endl;
+        }
+}
 

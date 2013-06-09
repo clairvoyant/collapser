@@ -17,7 +17,7 @@ csv-lexer.cc: csv-lexer.ll csv-parser.tab.cc
 	flex   -+ -t $< > $@
 
 csv-parser.tab.cc: csv-parser.yy
-	bison  -d $< -o $@
+	bison  $< -o $@
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
