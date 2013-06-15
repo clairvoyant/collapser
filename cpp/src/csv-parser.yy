@@ -5,10 +5,16 @@
 %define "parser_class_name" "csv_parser"
 
 
+
 %{
 #include <string>
+#include <stdio.h>
+#include <stdlib.h>
 #include "csv-driver.hh"
-class csv_driver;
+
+namespace yy { 
+   class csv_driver;
+};
 
 %}
 
@@ -38,8 +44,8 @@ class csv_driver;
 // memory allocation 
 
 
-%printer    { debug_stream () << *$$; } "identifier"
-%destructor { delete $$; } "identifier"
+// TODO %printer    { debug_stream () << *$$; } "identifier"
+// TODO %destructor { delete $$; } "identifier"
 
 %printer    { debug_stream () << $$; } "number" "expression"
 
@@ -68,7 +74,7 @@ atom: ID                    {printf("   ID\n");}
 %%
 
 void 
-yy::csv_parser::error(const yy::calcxx_parser::location_type& l,
+yy::csv_parser::error(const yy::csv_parser::location_type& l,
                                     const std::string& m)
 {
     driver.error(l, m);
@@ -79,4 +85,14 @@ yyFlexLexer::yywrap()
 {
     return 1;
 } 
+
+// Now that we have the Parser declared, we can declare the Scanner and implem
+// the yylex function
+#include "csv-driver.hh"
+yy::csv_parser::token_type   yylex (yy::csv_parser::semantic_type* yylval,      
+      yy::csv_driver& driver) 
+{
+    return driver.yylex(yylval);
+}
+
 

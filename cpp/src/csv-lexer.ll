@@ -1,4 +1,5 @@
 %{
+
 #include <cstdlib>
 #include <errno.h>
 #include <limits.h>
@@ -24,7 +25,7 @@
    track of lines and pos 
 */
 %{
-#define YY_USER_ACTION yylloc->columns(yyleng);
+    // #define YY_USER_ACTION yylloc->columns(yyleng);
 %}
 
 

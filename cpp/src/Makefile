@@ -14,7 +14,7 @@ clean:
 	rm -f $(OBJECTS) csv-parser.tab.* lexer.c
 
 csv-lexer.cc: csv-lexer.ll csv-parser.tab.cc
-	flex   -+ -t $< > $@
+	flex   -+ $< > $@
 
 csv-parser.tab.cc: csv-parser.yy
 	bison  $< -o $@
