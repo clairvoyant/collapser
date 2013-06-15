@@ -10,7 +10,6 @@
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
-#include "csv-driver.hh"
 
 namespace yy { 
    class csv_driver;
@@ -73,6 +72,10 @@ atom: ID                    {printf("   ID\n");}
     ;
 %%
 
+// Now that we have the Parser declared, we can declare the Scanner and implem
+// the yylex function
+#include "csv-driver.hh"
+
 void 
 yy::csv_parser::error(const yy::csv_parser::location_type& l,
                                     const std::string& m)
@@ -86,9 +89,6 @@ yyFlexLexer::yywrap()
     return 1;
 } 
 
-// Now that we have the Parser declared, we can declare the Scanner and implem
-// the yylex function
-#include "csv-driver.hh"
 yy::csv_parser::token_type   yylex (yy::csv_parser::semantic_type* yylval,      
       yy::csv_driver& driver) 
 {
