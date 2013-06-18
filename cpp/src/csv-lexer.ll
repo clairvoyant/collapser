@@ -1,5 +1,5 @@
 %{
-	#include "csv-scanner.h"
+ #include "CSVLexer.hh"
 %}
 
 %option nodefault yyclass="FlexLexer" noyywrap c++
