@@ -1,98 +1,43 @@
-
+%require "2.4.1"
 %skeleton "lalr1.cc"
-%require "2.1a"
 %defines
-%define "parser_class_name" "csv_parser"
+%define namespace "CSV"
+%define parser_class_name "BisonParser"
+%parse-param { CSV::FlexLexer &scanner }
+%lex-param   { CSV::FlexLexer &scanner }
 
-
-
-%{
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
-
-namespace yy { 
-   class csv_driver;
-};
-
-%}
-
-
-// interface is a reference to the driver.
-%parse-param { csv_driver& driver }
-%lex-param   { csv_driver& driver }
-
-
-// in case there is a location tracking...
-%locations
-%initial-action 
-{
-     // initial location
-    @$.begin.filename = @$.end.filename = &driver.file;
+%code requires {
+	// Forward-declare the Scanner class; the Parser needs to be assigned a 
+	// Scanner, but the Scanner can't be declared without the Parser
+	namespace CSV {
+		class FlexLexer;
+	}
 }
 
+%code {
+	// Prototype for the yylex function
+	static int yylex(CSV::BisonParser::semantic_type * yylval, CSV::FlexLexer &scanner);
+}
 
-// parser tracking and verbose output.
-%debug
-%error-verbose
-
-
-%token LPAREN RPAREN ID NUM STR
-
-
-// memory allocation 
-
-
-// TODO %printer    { debug_stream () << *$$; } "identifier"
-// TODO %destructor { delete $$; } "identifier"
-
-%printer    { debug_stream () << $$; } "number" "expression"
-
-
+%token INTEGER
 
 %%
 
+program
+	: program INTEGER { std::cout << "INTEGER / 5 = " << ($2 / 5) << std::endl; }
+	| INTEGER { std::cout << "INTEGER / 5 = " << ($1 / 5) << std::endl; }
+	;
 
-program: slist;
-
-slist: slist sexpr | sexpr;
-
-sexpr: atom                 {printf("matched sexpr\n");}
-    | list
-    ;
-list: LPAREN members RPAREN {printf("matched list\n");}
-    | LPAREN RPAREN         {printf("matched empty list\n");}
-    ;
-members: sexpr              {printf("members 1\n");}
-    | sexpr members         {printf("members 2\n");}
-    ;
-atom: ID                    {printf("   ID\n");}
-    | NUM                   {printf("   NUM\n");}
-    | STR                   {printf("   STR\n");}
-    ;
 %%
 
-// Now that we have the Parser declared, we can declare the Scanner and implem
+// We have to implement the error function
+void CSV::BisonParser::error(const CSV::BisonParser::location_type &loc, const std::string &msg) {
+	std::cerr << "Error: " << msg << std::endl;
+}
+
+// Now that we have the Parser declared, we can declare the Scanner and implement
 // the yylex function
-#include "csv-driver.hh"
-
-void 
-yy::csv_parser::error(const yy::csv_parser::location_type& l,
-                                    const std::string& m)
-{
-    driver.error(l, m);
+#include "CSVLexer.hh"
+static int yylex(CSV::BisonParser::semantic_type * yylval, CSV::FlexLexer &scanner) {
+	return scanner.yylex(yylval);
 }
-
-int 
-yyFlexLexer::yywrap()
-{
-    return 1;
-} 
-
-yy::csv_parser::token_type   yylex (yy::csv_parser::semantic_type* yylval,      
-      yy::csv_driver& driver) 
-{
-    return driver.yylex(yylval);
-}
-
-
