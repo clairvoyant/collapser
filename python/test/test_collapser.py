@@ -16,8 +16,8 @@ test_onecolum = [
     [ "dummy", "5", "100", "dim1_0", "dim2_1"]
 ]
 
-test_results1 = """dim2_0,6,44
-dim1_0,9,142
+test_results1 = """dim1_0,9,142
+dim2_0,6,44
 """
 
 test_results2 = """dim1_0,dim2_1,9,142

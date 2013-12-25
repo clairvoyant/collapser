@@ -54,7 +54,9 @@ class Collapser:
      def __str__(self):
         """ return a comma separated representation of each element in the record """
         result = ''
-        for dimKey in self.results.keys():
+        dimKeys = self.results.keys()
+        dimKeys.sort() 
+        for dimKey in dimKeys:
             dimRow = self.results[dimKey]
             s      = ''
 
