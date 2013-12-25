@@ -1,4 +1,4 @@
-colapser
+collapser
 ========
 
 Language benchmark based on the typical task of 
