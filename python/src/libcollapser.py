@@ -37,12 +37,11 @@ class Collapser:
             if len(record) < dim:
                return # not enough info
             dimkey += record[dim] + ','
-
         if not dimkey in self.results:
            self.results[dimkey] =  {}
 
         row = self.results[dimkey]
-
+ 
         for metric in self.metricsColumns:
             if len(record) < metric:
                return # not enough info
