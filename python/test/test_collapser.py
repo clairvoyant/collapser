@@ -23,6 +23,10 @@ dim2_0,6,44
 test_results2 = """dim1_0,dim2_1,9,142
 dim2_0,dim2_1,6,44
 """
+test_results3 = [ 
+    ["dim1_0,dim2_1",9,142 ],
+    ["dim2_0,dim2_1",6,44 ]
+]
 
 
 class TestCollapserSuite(unittest.TestCase):
@@ -45,6 +49,15 @@ class TestCollapserSuite(unittest.TestCase):
             col.do(row)
             
         self.assertEqual(str(col), test_results2)
+
+    def test_iterator(self):
+        col = Collapser()
+        col.init([3,4], [1,2])
+        for row in test_onecolum:
+            col.do(row)
+            
+        for (row1, row2) in zip(iter(col), test_results3):
+           self.assertEqual(row1, row2)
     
 
 

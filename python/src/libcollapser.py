@@ -32,11 +32,8 @@ class Collapser:
              
              record: shall be a list of values. if the len is not enought, then return."""
          
-        dimkey = ""
-        for dim in self.dimsColumns:
-            if len(record) < dim:
-               return # not enough info
-            dimkey += record[dim] + ','
+        dimkey = ','.join([record[dim] for dim in self.dimsColumns ])
+
         if not dimkey in self.results:
            self.results[dimkey] =  {}
 
@@ -53,26 +50,26 @@ class Collapser:
 
      def __str__(self):
         """ return a comma separated representation of each element in the record """
-        result = ''
-        dimKeys = self.results.keys()
-        dimKeys.sort() 
-        for dimKey in dimKeys:
-            dimRow = self.results[dimKey]
-            s      = ''
-
-            first=True
-
-            for metricCol in dimRow.keys():
-                metricVal = dimRow[metricCol]
-                if first:
-                   first = False
-                   s += str(metricVal)
-                else:
-                   s += ','+ str(metricVal)
-
-            result += dimKey + s +"\n"
-
-
+        result = ""         
+        for row in iter(self):
+            result += ','.join([str(field) for field in row])
+            result += '\n'
         return result
-
+        
+     def __iter__(self):
+         """generator it returns a row with 
+            concatenated keys. Note the dimensions are inside the same string
+                ["key1,key2", A,B,C]
+         """
+         
+         dimKeys = self.results.keys()
+         dimKeys.sort() 
+         for dimKey in dimKeys:
+             dimRow = self.results[dimKey]
+             result = [dimKey]
+             for metricCol in dimRow.keys():
+                 metricVal = dimRow[metricCol]
+                 result.append(metricVal)
+             yield result
+         return
 
