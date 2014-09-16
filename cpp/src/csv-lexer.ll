@@ -6,6 +6,8 @@
 
 %%
 
-[1-9][0-9]*  { *yylval = atoi(yytext); return CSV::BisonParser::token::INTEGER; }
-.+|\n        { /* Ignore everything that isn't an integer */ }
+
+,            { return CSV::BisonParser::token::COMMA; }
+\"           { return CSV::BisonParser::token::DQUOTE; }
+\n           { return CSV::BisonParser::token::EOL; }
 

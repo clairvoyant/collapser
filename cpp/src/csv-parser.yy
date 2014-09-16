@@ -19,14 +19,32 @@
 	static int yylex(CSV::BisonParser::semantic_type * yylval, CSV::FlexLexer &scanner);
 }
 
-%token INTEGER
+%token COMMA
+%token STRING
+%token DQUOTE
+%token EOL
 
 %%
 
-program
-	: program INTEGER { std::cout << "INTEGER / 5 = " << ($2 / 5) << std::endl; }
-	| INTEGER { std::cout << "INTEGER / 5 = " << ($1 / 5) << std::endl; }
+csv
+	: csv record 
+	| record 
 	;
+
+record
+	: fields field
+    ;
+fields
+    : fields field
+    | field
+field
+    : COMMA STRING COMMA
+    | STRING 
+    ;
+    
+
+
+
 
 %%
 

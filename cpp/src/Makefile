@@ -11,7 +11,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS)  -o $@
 
 clean:
-	rm -f $(OBJECTS) csv-parser.tab.* lexer.c position.hh location.hh *.yy.cc stack.hh csv-lexer.cc
+	rm -f $(EXECUTABLE) $(OBJECTS) csv-parser.tab.* lexer.c position.hh location.hh *.yy.cc stack.hh csv-lexer.cc
 
 csv-lexer.cc: csv-lexer.ll csv-parser.tab.cc
 	flex   -o $@ $<
